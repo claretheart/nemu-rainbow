@@ -1,7 +1,10 @@
 import Image from "next/image";
-import { profile, links, gallery } from "./data";
+import { profile, links, gallery, yorujikan, LINE_FRIEND_URL } from "./data";
 
 export default function Home() {
+  // LINE公式アカウントの友だち追加URLが未設定のあいだは「じゅんびちゅう」表示にする
+  const lineReady = LINE_FRIEND_URL.startsWith("https://");
+
   return (
     <div style={{ maxWidth: "640px", margin: "0 auto", padding: "56px 20px 48px" }}>
 
@@ -22,10 +25,8 @@ export default function Home() {
         {/* 名前 */}
         <h1 style={{ marginBottom: "8px" }}>
           <span className="name-gradient">{profile.name}</span>
+          <span style={{ fontSize: "0.45em", fontWeight: 600, color: "#9fb0dd", marginLeft: "6px" }}>【{profile.reading}】</span>
         </h1>
-        <p style={{ fontSize: "13px", fontWeight: 600, letterSpacing: "0.35em", textIndent: "0.35em", color: "#9fb0dd", marginBottom: "4px" }}>
-          {profile.title}
-        </p>
         <p style={{ fontSize: "13px", color: "#8b93bd", marginBottom: "14px" }}>
           {profile.handle}
         </p>
@@ -34,6 +35,55 @@ export default function Home() {
         </div>
         <div className="rainbow-line" style={{ maxWidth: "120px", margin: "0 auto" }} />
       </div>
+
+      {/* ===== よるじかん with ねむ（事前登録） ===== */}
+      <section id="yorujikan" style={{ marginBottom: "48px", scrollMarginTop: "24px" }}>
+        <p className="section-title fade-up" style={{ animationDelay: "0.12s" }}>{yorujikan.sectionLabel}</p>
+
+        <div className="yorujikan-card fade-up" style={{ animationDelay: "0.18s" }}>
+          <h2 style={{ fontSize: "19px", fontWeight: 700, lineHeight: 1.7, marginBottom: "14px", color: "#fff" }}>
+            <span className="rainbow-text">{yorujikan.titleApp}</span>{yorujikan.titleTail}
+          </h2>
+
+          <p style={{ fontSize: "15px", lineHeight: 2, color: "var(--text)" }}>
+            {yorujikan.body}
+          </p>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", margin: "20px 0 18px" }}>
+            <span className="yorujikan-price">{yorujikan.price}</span>
+            <a
+              href={yorujikan.progressUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="yorujikan-note"
+            >
+              <span aria-hidden="true">𝕏</span>{yorujikan.progressLabel}
+            </a>
+          </div>
+
+          <div className="rainbow-line" style={{ opacity: 0.45, marginBottom: "18px" }} />
+
+          <p style={{ fontSize: "14px", color: "#b0c4e8", marginBottom: "12px", textAlign: "center" }}>
+            {yorujikan.ctaLead}
+          </p>
+
+          {lineReady ? (
+            <a
+              href={LINE_FRIEND_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="line-button"
+            >
+              <span aria-hidden="true">💬</span>{yorujikan.ctaLabel}
+            </a>
+          ) : (
+            <button type="button" className="line-button is-pending" disabled>
+              <span aria-hidden="true">💬</span>{yorujikan.ctaLabel}
+              <span className="line-button-note">{yorujikan.ctaPendingNote}</span>
+            </button>
+          )}
+        </div>
+      </section>
 
       {/* ===== リンク一覧 ===== */}
       <section style={{ marginBottom: "48px" }}>
