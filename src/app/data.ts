@@ -23,7 +23,7 @@ export const yorujikan = {
   titleTail: "つくっています",
   body: "夜のさぎょうの おともに、わたしが そばにいる——そんなデスクトップアプリを つくっています。うたと、ポモドーロタイマーと、ちいさな おしゃべり。あなたの ひとりの時間に、そっと寄り添えたら。",
   price: "980円(税込・予定)",
-  progressLabel: "制作のようすは #ネムの開発日記 で",
+  progressLabel: "制作のようすは #ねむの夜日記 で",
   progressUrl: "https://x.com/nemu_rainbow",
   ctaLead: "できあがったら、いちばんに お知らせします",
   ctaLabel: "LINEで友だち追加",
