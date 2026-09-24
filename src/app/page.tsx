@@ -1,114 +1,131 @@
 import Image from "next/image";
-import { profile, links, gallery, yorujikan, LINE_FRIEND_URL } from "./data";
+import Link from "next/link";
+import { profile, links, gallery, yorujikan, services, works } from "./data";
+import WorkCard from "./WorkCard";
 
 export default function Home() {
-  // LINE公式アカウントの友だち追加URLが未設定のあいだは「じゅんびちゅう」表示にする
-  const lineReady = LINE_FRIEND_URL.startsWith("https://");
 
   return (
-    <div style={{ maxWidth: "640px", margin: "0 auto", padding: "56px 20px 48px" }}>
+    <div className="page">
 
       {/* ===== プロフィール ===== */}
-      <div className="fade-up" style={{ textAlign: "center", marginBottom: "44px" }}>
-        {/* アバター */}
-        <div className="avatar-ring" style={{ marginBottom: "20px" }}>
+      <header className="profile">
+        <Image
+          src={profile.avatar}
+          alt={profile.name}
+          width={144}
+          height={144}
+          className="profile-avatar"
+          priority
+        />
+        <div>
+          <div className="profile-name">
+            <h1>{profile.name}</h1>
+            <span className="text-sub">{profile.reading}</span>
+          </div>
+          <p className="text-sub">{profile.handle}</p>
+          <div className="profile-bio">
+            {profile.bio.map((line, i) => <p key={i}>{line}</p>)}
+          </div>
+        </div>
+      </header>
+      <div className="rainbow-line" />
+
+      {/* ===== よるじかん with ねむ（発売中） ===== */}
+      <section id="yorujikan" className="section">
+        <h2>{yorujikan.title}</h2>
+
+        {/* ページの中の夜の窓。タイトルとキャッチはキービジュアルに入っているので繰り返さない */}
+        <div className="yorujikan-card">
+          {/* PC幅では画像を左・文章を右に。狭い幅では画像を上に、4:3に切って小さく */}
           <Image
-            src={profile.avatar}
-            alt={profile.name}
-            width={108}
-            height={108}
-            style={{ borderRadius: "50%", display: "block", width: "100%", height: "100%" }}
+            src={yorujikan.images.key.src}
+            alt={yorujikan.images.key.alt}
+            width={1000}
+            height={1000}
+            className="yorujikan-key"
             priority
           />
-        </div>
+          <div className="yorujikan-body">
+          <p className="text-sub yorujikan-status">{yorujikan.status}</p>
+          <p>{yorujikan.body}</p>
 
-        {/* 名前 */}
-        <h1 style={{ marginBottom: "8px" }}>
-          <span className="name-gradient">{profile.name}</span>
-          <span style={{ fontSize: "0.45em", fontWeight: 600, color: "#9fb0dd", marginLeft: "6px" }}>【{profile.reading}】</span>
-        </h1>
-        <p style={{ fontSize: "13px", color: "#8b93bd", marginBottom: "14px" }}>
-          {profile.handle}
-        </p>
-        <div style={{ fontSize: "15px", lineHeight: 1.9, color: "var(--text)", maxWidth: "400px", margin: "0 auto 24px" }}>
-          {profile.bio.map((line, i) => <p key={i}>{line}</p>)}
-        </div>
-        <div className="rainbow-line" style={{ maxWidth: "120px", margin: "0 auto" }} />
-      </div>
+          <ul className="yorujikan-features">
+            {yorujikan.features.map((feature) => <li key={feature}>{feature}</li>)}
+          </ul>
 
-      {/* ===== よるじかん with ねむ（事前登録） ===== */}
-      <section id="yorujikan" style={{ marginBottom: "48px", scrollMarginTop: "24px" }}>
-        <p className="section-title fade-up" style={{ animationDelay: "0.12s" }}>{yorujikan.sectionLabel}</p>
+          {/* 機能紹介のサムネ（クリックで原寸を開く） */}
 
-        <div className="yorujikan-card fade-up" style={{ animationDelay: "0.18s" }}>
-          <h2 style={{ fontSize: "19px", fontWeight: 700, lineHeight: 1.7, marginBottom: "14px", color: "#fff" }}>
-            <span className="rainbow-text">{yorujikan.titleApp}</span>{yorujikan.titleTail}
-          </h2>
-
-          <p style={{ fontSize: "15px", lineHeight: 2, color: "var(--text)" }}>
-            {yorujikan.body}
-          </p>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", margin: "20px 0 18px" }}>
-            <span className="yorujikan-price">{yorujikan.price}</span>
-            <a
-              href={yorujikan.progressUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="yorujikan-note"
-            >
-              <span aria-hidden="true">𝕏</span>{yorujikan.progressLabel}
-            </a>
+          <div className="yorujikan-price-row">
+            <span className="text-strong">{yorujikan.price}</span>
+            <span className="text-sub">{yorujikan.platform}</span>
           </div>
 
-          <div className="rainbow-line" style={{ opacity: 0.45, marginBottom: "18px" }} />
-
-          <p style={{ fontSize: "14px", color: "#b0c4e8", marginBottom: "12px", textAlign: "center" }}>
-            {yorujikan.ctaLead}
-          </p>
-
-          {lineReady ? (
-            <a
-              href={LINE_FRIEND_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="line-button"
-            >
-              <span aria-hidden="true">💬</span>{yorujikan.ctaLabel}
-            </a>
-          ) : (
-            <button type="button" className="line-button is-pending" disabled>
-              <span aria-hidden="true">💬</span>{yorujikan.ctaLabel}
-              <span className="line-button-note">{yorujikan.ctaPendingNote}</span>
-            </button>
-          )}
+          {/* 主役：BOOTHの商品ページへ */}
+          <a
+            href={yorujikan.boothUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="button-primary"
+          >
+            {yorujikan.boothLabel}
+          </a>
+          </div>
         </div>
       </section>
 
+      {/* ===== 制作実績（抜粋。よるじかんは上に出ているので除く） ===== */}
+      <section id="works" className="section">
+        <h2>制作実績</h2>
+        <div className="works-grid is-compact">
+          {works.filter((w) => w.title !== yorujikan.title).slice(0, 6).map((work) => (
+            <WorkCard key={work.title} work={work} />
+          ))}
+        </div>
+        <p className="works-more">
+          <Link href="/works" className="text-link">すべての制作実績を見る →</Link>
+        </p>
+      </section>
+
+      {/* ===== おしごと（制作のご依頼） ===== */}
+      <section id="services" className="section">
+        <h2>{services.sectionLabel}</h2>
+
+        <p className="text-strong">{services.lead}</p>
+
+        <ul className="service-chips">
+          {services.items.map((item) => <li key={item} className="service-chip">{item}</li>)}
+        </ul>
+
+        <p>{services.strength}</p>
+        <p className="text-sub service-note">{services.note}</p>
+
+        <a
+          href={services.ctaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="button-outline"
+        >
+          {services.ctaLabel}
+        </a>
+      </section>
+
       {/* ===== リンク一覧 ===== */}
-      <section style={{ marginBottom: "48px" }}>
-        <p className="section-title fade-up" style={{ animationDelay: "0.15s" }}>Links</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {links.map((link, i) => (
+      <section className="section">
+        <h2>リンク</h2>
+        <div className="link-list">
+          {links.map((link) => (
             <a
               key={link.label}
               href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-card fade-up"
-              style={{
-                animationDelay: `${0.2 + i * 0.08}s`,
-                background: `linear-gradient(0deg, ${link.color}12, ${link.color}12), var(--surface)`,
-                "--card-color": link.color,
-                "--card-glow": `${link.color}59`,
-              } as React.CSSProperties}
+              {...(link.url.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="link-row"
             >
-              <div className="link-icon" style={{ background: `${link.color}33`, color: link.color }}>{link.icon}</div>
               <div>
-                <div style={{ fontWeight: 600, fontSize: "15px", marginBottom: link.desc ? "2px" : 0, color: "#fff" }}>{link.label}</div>
-                {link.desc && <div style={{ fontSize: "13px", color: "#b0c4e8" }}>{link.desc}</div>}
+                <p className="text-strong">{link.label}</p>
+                {link.desc && <p className="text-sub">{link.desc}</p>}
               </div>
-              <div className="link-arrow">→</div>
+              <span className="link-arrow" aria-hidden="true">→</span>
             </a>
           ))}
         </div>
@@ -116,12 +133,12 @@ export default function Home() {
 
       {/* ===== ギャラリー ===== */}
       {gallery.length > 0 && (
-        <section className="fade-up" style={{ animationDelay: "0.4s" }}>
-          <p className="section-title">Gallery</p>
+        <section className="section">
+          <h2>ギャラリー</h2>
           <div className="gallery-grid">
             {gallery.map((src, i) => (
               <div key={i} className="gallery-item">
-                <Image src={src} alt={`gallery-${i}`} width={300} height={300} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <Image src={src} alt={`gallery-${i}`} width={300} height={300} />
               </div>
             ))}
           </div>
@@ -129,7 +146,7 @@ export default function Home() {
       )}
 
       {/* ===== フッター ===== */}
-      <footer className="site-footer fade-up" style={{ animationDelay: "0.55s" }}>
+      <footer className="site-footer text-sub">
         <p>© 2026 音夢 · Nemu Rainbow</p>
       </footer>
 

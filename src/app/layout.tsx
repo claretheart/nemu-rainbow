@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import NightSky from "./NightSky";
 
 export const metadata: Metadata = {
   // OG画像などの相対パスを公開URLで解決するための基点
@@ -22,7 +21,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body>
-        <NightSky />
         {children}
       </body>
     </html>

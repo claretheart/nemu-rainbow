@@ -67,7 +67,8 @@ export const services = {
   ctaUrl: "https://x.com/nemu_rainbow",
 };
 
-export const works: { title: string; youtubeId: string; desc?: string }[] = [
+// 制作実績（youtubeId があれば YouTube サムネ、image があればその画像を表示）
+export const works: { title: string; desc?: string; youtubeId?: string; href?: string; image?: string }[] = [
   { title: "Bet My Existence", youtubeId: "nRiuS6JsQfI", desc: "2026.05" },
 ];
 
