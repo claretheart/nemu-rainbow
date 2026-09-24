@@ -13,8 +13,6 @@ export const profile = {
 export const links = [
   { label: "X（旧Twitter）", desc: "おしごとのご相談はDMへ", url: "https://x.com/nemu_rainbow", icon: "𝕏", color: "#4dabf7" },
   { label: "ネムの夜日記", desc: "音夢の日常4コマ漫画", url: "https://nemu-night-diary.vercel.app", icon: "📖", color: "#9775fa" },
-  { label: "YouTube", desc: "", url: "https://www.youtube.com/channel/UCUpEepsmE6wvRlY1zGh_wHw", icon: "▶", color: "#20c997" },
-  { label: "制作実績", desc: "MV・楽曲クレジット", url: "/works", icon: "🎬", color: "#f783ac" },
 ];
 
 // LINE公式アカウントの友だち追加URL（差し替えはここ1箇所だけ）
@@ -69,7 +67,14 @@ export const services = {
 
 // 制作実績（youtubeId があれば YouTube サムネ、image があればその画像を表示）
 export const works: { title: string; desc?: string; youtubeId?: string; href?: string; image?: string }[] = [
+  { title: "よるじかん with ねむ", desc: "デスクトップアプリ/2026.09 発売", href: YORUJIKAN_BOOTH_URL, image: "/yorujikan/key.webp" },
+  { title: "学習塾向け SNSショート動画の自動生成システム", desc: "Webアプリ/クイズ動画の一括生成から承認・投稿までを1画面で", image: "/works/juku-sns.webp" },
+  { title: "アイネ・クライネ・ナハト・ムジーク", desc: "MV/2026.09 制作(公開準備中)", image: "/works/aine-kleine.webp" },
   { title: "Bet My Existence", youtubeId: "nRiuS6JsQfI", desc: "2026.05" },
+  { title: "ニンジャ犯科帳「チュロスの商人」", youtubeId: "qKrRWRvHeeE", image: "/works/churros.webp", desc: "シーン6のアニメーションを担当" },
+  { title: "ニンジャ犯科帳「野生の証明」", youtubeId: "U4Xhf8YvPps", desc: "シーン11(ラストシーン)のアニメーションを担当" },
+  { title: "harukaze", desc: "ホームページ/京都の小さなお店向けデジタルパートナー", href: "https://harukaze-kyoto.jp", image: "/works/harukaze.webp" },
+  { title: "音のかたづけ", desc: "LP・記事サイト/楽器・オーディオの手放し方ガイド", href: "https://oto-katazuke.com", image: "/works/oto-katazuke.webp" },
 ];
 
 // 「はじめて開くときの手順」ページ（/yorujikan/guide）
