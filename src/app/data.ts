@@ -74,7 +74,7 @@ export const works: { title: string; desc?: string; youtubeId?: string; href?: s
   { title: "ニンジャ犯科帳「野生の証明」", youtubeId: "U4Xhf8YvPps", desc: "シーン11(ラストシーン)のアニメーションを担当" },
   { title: "harukaze", desc: "ホームページ/京都の小さなお店向けデジタルパートナー", href: "https://harukaze-kyoto.jp", image: "/works/harukaze.webp" },
   { title: "音のかたづけ", desc: "LP・記事サイト/楽器・オーディオの手放し方ガイド", href: "https://oto-katazuke.com", image: "/works/oto-katazuke.webp" },
-  { title: "CN学園ADV(仮題)", desc: "ブラウザゲーム/CryptoNinja二次創作の学園育成×恋愛アドベンチャー、制作中", image: "/works/cn-gakuen-choice.webp" },
+  { title: "CN学園ADV(仮題)", desc: "ブラウザゲーム/CryptoNinja二次創作の学園育成×恋愛アドベンチャー、制作中", image: "/works/cn-gakuen-pool.webp" },
   { title: "学習塾向け SNSショート動画の自動生成システム", desc: "Webアプリ/クイズ動画の一括生成から承認・投稿までを1画面で", image: "/works/juku-sns.webp" },
 ];
 
