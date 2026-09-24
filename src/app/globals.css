@@ -358,10 +358,6 @@ h2 {
   gap: 12px;
 }
 
-.works-more {
-  margin-top: 16px;
-}
-
 .work-card {
   display: block;
   background: var(--surface);

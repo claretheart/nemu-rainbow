@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { profile, links, gallery, yorujikan, services, works } from "./data";
 import WorkCard from "./WorkCard";
 
@@ -74,17 +73,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== 制作実績（抜粋。よるじかんは上に出ているので除く） ===== */}
+      {/* ===== 制作実績（全件。よるじかんは上に出ているので除く） ===== */}
       <section id="works" className="section">
         <h2>制作実績</h2>
         <div className="works-grid is-compact">
-          {works.filter((w) => w.title !== yorujikan.title).slice(0, 6).map((work) => (
+          {works.filter((w) => w.title !== yorujikan.title).map((work) => (
             <WorkCard key={work.title} work={work} />
           ))}
         </div>
-        <p className="works-more">
-          <Link href="/works" className="text-link">すべての制作実績を見る →</Link>
-        </p>
       </section>
 
       {/* ===== おしごと（制作のご依頼） ===== */}
