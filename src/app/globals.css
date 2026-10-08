@@ -290,6 +290,11 @@ h2 {
   opacity: 1;
 }
 
+/* 表に出す前の動画(最初のコマを描かせている間)。opacity:0 だと描画されないブラウザがあるので、ほぼ透明で動かす */
+.hero-video.is-warming {
+  opacity: .01;
+}
+
 .hero-video.is-active.is-intro {
   animation: hero-video-in .4s var(--ease) both;
 }

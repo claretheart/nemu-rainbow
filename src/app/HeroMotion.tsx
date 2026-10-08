@@ -6,8 +6,15 @@ import { createHeroLog, type HeroLog } from "./heroDebug";
 
 // 静止画から動画へ切り替えるときのフェード時間(ms)。globals.css の .is-intro のアニメーション時間と合わせる
 const FADE_MS = 400;
-// 繰り返しの切り替えを、最後のコマの何秒手前(以内)で始めるか。24fpsの1コマ=約0.042秒より少し長い
-const SWITCH_LEAD_S = 0.06;
+// 繰り返しの切り替えを、最後のコマの何秒手前(以内)で始めるか（初期値）。
+// 待機側に play() をかけてから最初のコマが出るまでの実測（約50ms）に合わせて、切り替えのたびに自動で調整する
+const SWITCH_LEAD_S = 0.1;
+const SWITCH_LEAD_MIN_S = 0.06;
+const SWITCH_LEAD_MAX_S = 0.4;
+// 待機側に play() をかけて、この時間たっても最初のコマが出ないときは、切り替えを諦めて出ている側を頭から再生し直す
+const HANDOFF_GUARD_MS = 1500;
+// 最初の表示：rVFC が使えるのに最初のコマが出ない場合、playing からこの時間で表に出す
+const FIRST_SHOW_GUARD_MS = 1000;
 // requestVideoFrameCallback が無いブラウザ用：残りがこの秒数を切ったら、終わり間際にタイマーで切り替える
 const FALLBACK_NEAR_S = 0.35;
 // 縦長用に切り替える幅（Hero.tsx の <source media> と同じ）
@@ -111,8 +118,14 @@ export default function HeroMotion({ video }: { video: { wide: HeroVideoSrc | nu
     const nameOf = (v: HTMLVideoElement) => (v === a ? "A" : "B");
     let front = 0; // 表に出ている側
     let inView = true;
-    let swapping = false; // 1周に1回だけ切り替える
-    let pendingSwap = false; // 止まっている間に切り替え時刻が来た
+    let swapping = false; // 1周に1回だけ切り替える（切り替え待ちの間も true）
+    let pendingSwap = false; // 止まっている間に切り替え時刻が来た／切り替え待ちを中断した
+    let lead = SWITCH_LEAD_S;
+    // 切り替え待ち：待機側に play() をかけてから、その最初のコマが出るまで（この間は出ている側を隠さない）
+    let handoff: { cur: HTMLVideoElement; next: HTMLVideoElement; t0: number; rvfc: number; guard: number } | null = null;
+    let firstRvfc = 0;
+    let firstShown = false;
+    let firstGuard = 0;
     let rvfcId = 0;
     let rvfcTarget: HTMLVideoElement | null = null;
     let timer = 0;
@@ -177,13 +190,58 @@ export default function HeroMotion({ video }: { video: { wide: HeroVideoSrc | nu
       rvfcTarget = v;
       const cb: VideoFrameRequestCallback = (_now, meta) => {
         if (v !== vids[front]) return;
-        if (v.duration - meta.mediaTime <= SWITCH_LEAD_S) swap();
+        if (v.duration - meta.mediaTime <= lead) swap();
         else rvfcId = v.requestVideoFrameCallback(cb);
       };
       rvfcId = v.requestVideoFrameCallback(cb);
     };
 
-    // 待機側を同じ瞬間に再生して表に出し、出ていた側は先頭へ戻して待機させる（フェードなしの即時切り替え）
+    // 切り替え待ちをやめる（待機側は頭に戻して止める。出ている側には触らない）
+    const abortHandoff = () => {
+      const h = handoff;
+      if (!h) return;
+      handoff = null;
+      window.clearTimeout(h.guard);
+      if (hasRvfc) h.next.cancelVideoFrameCallback(h.rvfc);
+      h.next.pause();
+      h.next.currentTime = 0;
+      h.next.classList.remove("is-warming");
+    };
+
+    // 待機側が最初のコマを実際に出した：ここで初めて、同じ処理の中で表を付け替える（A と B が同時に見える時間はゼロ）
+    const commit = (via: string) => {
+      const h = handoff;
+      if (!h) return;
+      const { cur, next } = h;
+      handoff = null;
+      window.clearTimeout(h.guard);
+      const dt = performance.now() - h.t0;
+      log(`${nameOf(next)} 最初のコマ play()から${Math.round(dt)}ms後 (${via})`);
+      next.classList.remove("is-warming");
+      next.classList.add("is-active");
+      cur.classList.remove("is-active");
+      log(`付け替え ${nameOf(cur)}→${nameOf(next)}`);
+      front = 1 - front;
+      // 付け替えが済んでから、古い側を先頭へ戻して待機させる
+      cur.pause();
+      cur.currentTime = 0;
+      // 次回は、最初のコマが出るまでの実測に合わせて早めに始める
+      lead = Math.min(SWITCH_LEAD_MAX_S, Math.max(SWITCH_LEAD_MIN_S, dt / 1000 + 0.02));
+      arm(next);
+    };
+
+    // 保険：切り替えを諦めて、出ている側を頭から再生し直す（空白を作らない方向に倒す）
+    const giveUp = (why: string) => {
+      const h = handoff;
+      if (!h) return;
+      abortHandoff();
+      log(`保険が働いた: ${why} → ${nameOf(h.cur)} を頭から再生し直す`);
+      h.cur.currentTime = 0;
+      tryPlay(h.cur, "保険");
+      arm(h.cur);
+    };
+
+    // 切り替えのきっかけ：まず待機側に play() をかけるだけ。出ている側は最後のコマで見え続ける
     const swap = () => {
       if (swapping) return;
       if (stopped()) {
@@ -196,25 +254,43 @@ export default function HeroMotion({ video }: { video: { wide: HeroVideoSrc | nu
       if (next.readyState < 2) {
         // 待機側がまだ先頭のコマを出せない（iOS は play() まで読み込まないことがある）：
         // 全体は失敗扱いにせず、出ている側を頭へ戻して続ける（loop 相当の保険）
-        log(`待機側 ${nameOf(next)} が未準備(readyState=${next.readyState}) → ${nameOf(cur)} を頭へ戻して続ける`);
+        log(`保険が働いた: 待機側 ${nameOf(next)} が未準備(readyState=${next.readyState}) → ${nameOf(cur)} を頭から再生し直す`);
         cur.currentTime = 0;
         tryPlay(cur, "頭へ戻して続ける");
         arm(cur);
         return;
       }
-      log(`切り替え ${nameOf(cur)}→${nameOf(next)}`);
-      next.classList.add("is-active");
-      cur.classList.remove("is-active");
-      tryPlay(next, "切り替え");
-      front = 1 - front;
-      cur.pause();
-      cur.currentTime = 0;
-      arm(next);
+      const h = {
+        cur,
+        next,
+        t0: performance.now(),
+        rvfc: 0,
+        guard: window.setTimeout(() => giveUp(`${HANDOFF_GUARD_MS}ms たっても ${nameOf(next)} の最初のコマが出ない`), HANDOFF_GUARD_MS),
+      };
+      handoff = h;
+      log(`${nameOf(next)} に play() をかける (${nameOf(cur)} は表のまま)`);
+      // 描画されるように、ほぼ透明(.01)で動かす。表に出すのは最初のコマが出てから
+      next.classList.add("is-warming");
+      if (hasRvfc) h.rvfc = next.requestVideoFrameCallback(() => commit("rVFC"));
+      next.play().then(
+        () => log(`${nameOf(next)} play() resolve`),
+        (e: unknown) => {
+          log(`${nameOf(next)} play() reject ${e instanceof DOMException ? e.name : "?"}`);
+          if (handoff === h) giveUp(`${nameOf(next)} の play() が拒否された`);
+        },
+      );
     };
 
     const sync = () => {
       const v = vids[front];
       if (stopped()) {
+        if (handoff) {
+          // 切り替え待ちの途中で止める：待機側を戻し、再開したときにやり直す
+          abortHandoff();
+          swapping = false;
+          pendingSwap = true;
+          log("切り替え待ちを中断（再開時にやり直す）");
+        }
         v.pause();
         return;
       }
@@ -232,17 +308,31 @@ export default function HeroMotion({ video }: { video: { wide: HeroVideoSrc | nu
     // rVFC が無いブラウザ：終わり間際に timeupdate で気づき、残り時間ぶんタイマーで待って切り替える
     const onTimeUpdate = (e: Event) => {
       const v = e.currentTarget as HTMLVideoElement;
+      // rVFC が無いブラウザ：待機側の時刻が進んだら最初のコマが出たとみなす
+      if (!hasRvfc && handoff && v === handoff.next && v.currentTime > 0) {
+        commit("timeupdate");
+        return;
+      }
       if (hasRvfc || v !== vids[front] || timer) return;
       const remain = v.duration - v.currentTime;
-      if (remain < FALLBACK_NEAR_S) timer = window.setTimeout(swap, Math.max(0, remain * 1000 - 30));
+      if (remain < FALLBACK_NEAR_S) timer = window.setTimeout(swap, Math.max(0, (remain - lead) * 1000));
     };
-    // 最初の再生が始まったら表に出す（フェードイン）。待機側 B の読み込みはここで促す
-    // （iOS は preload を無視する。B の play()→pause() は A を止めることがあるのでしない）
-    const onFirstPlaying = () => {
+    // 最初の表示：動画 A が実際に1コマ出してから表に出す（フェードイン）。静止画を隠すのはフェード完了後（下の 3）
+    // 待機側 B の読み込みはここで促す（iOS は preload を無視する。B の play()→pause() は A を止めることがあるのでしない）
+    const showFront = (via: string) => {
+      if (firstShown) return;
+      firstShown = true;
+      window.clearTimeout(firstGuard);
+      log(`A 最初のコマ (${via}) → フェードイン`);
+      a.classList.remove("is-warming");
       a.classList.add("is-active", "is-intro");
       setPlaying(true);
       log("B.load() を呼ぶ");
       b.load();
+    };
+    const onFirstPlaying = () => {
+      if (!hasRvfc) showFront("playing");
+      else firstGuard = window.setTimeout(() => showFront("playing+保険"), FIRST_SHOW_GUARD_MS);
     };
     // 待機側は先頭の1コマで止めておく（display:none にはしない＝opacity:0 で隠す）
     const onBackLoaded = () => {
@@ -261,9 +351,17 @@ export default function HeroMotion({ video }: { video: { wide: HeroVideoSrc | nu
     const onError = (e: Event) => {
       const v = e.currentTarget as HTMLVideoElement;
       log(`${nameOf(v)} error code=${v.error?.code} message=${v.error?.message ?? ""}`);
+      // 切り替え待ちの待機側のエラーは全体を止めず、出ている側を頭から再生し直す
+      if (handoff && v === handoff.next) {
+        giveUp(`${nameOf(v)} の error`);
+        return;
+      }
       fail(`${nameOf(v)} の読み込み・再生エラー`);
     };
 
+    // A はほぼ透明(.01)で動かして描画させ、最初のコマが出てから表に出す
+    a.classList.add("is-warming");
+    if (hasRvfc) firstRvfc = a.requestVideoFrameCallback(() => showFront("rVFC"));
     a.addEventListener("playing", onFirstPlaying, { once: true });
     b.addEventListener("loadeddata", onBackLoaded);
     vids.forEach((v) => {
@@ -284,6 +382,9 @@ export default function HeroMotion({ video }: { video: { wide: HeroVideoSrc | nu
       io.disconnect();
       document.removeEventListener("visibilitychange", sync);
       disarmGesture();
+      abortHandoff();
+      window.clearTimeout(firstGuard);
+      if (hasRvfc) a.cancelVideoFrameCallback(firstRvfc);
       a.removeEventListener("playing", onFirstPlaying);
       b.removeEventListener("loadeddata", onBackLoaded);
       vids.forEach((v) => {
