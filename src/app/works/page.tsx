@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { works } from "../data";
-import WorkCard from "../WorkCard";
+import WorksBrowser from "../WorksBrowser";
 
 export default function WorksPage() {
   return (
@@ -22,9 +22,7 @@ export default function WorksPage() {
           準備中です
         </p>
       ) : (
-        <div className="works-grid">
-          {works.map((work) => <WorkCard key={work.title} work={work} />)}
-        </div>
+        <WorksBrowser items={works} />
       )}
     </div>
   );

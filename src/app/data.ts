@@ -4,14 +4,44 @@ export const profile = {
   handle: "@nemu_rainbow",
   bio: [
     "夜の作業アプリ『よるじかん with ねむ』、発売中🌈",
-    "イラスト・HP・LP・ゲーム・アニメ・アプリ・MVなど、だいたいなんでもつくります。",
-    "得意は After Effects。ご依頼は X のDMへ。",
+    "HP・LP・ゲーム・アニメ・アプリ・MVなどをつくります。",
+    "ご依頼は X のDMへ。",
   ],
   avatar: "/avatar.png",
 };
 
+export type HeroVideoSrc = { webm: string; hevc: string };
+
+// 最初の一画面（絵は後から届く。届いたら image の2行を差し替えるだけ）
+export const hero = {
+  image: {
+    wide: "/hero/wide.webp", // 幅701px以上で出す横長の絵
+    tall: "/hero/tall.webp", // 幅700px以下で出す縦長の絵
+  },
+  // 透過つきの動画（静止画の上に重なって動く）。webm=Chrome/Firefox/Edge、hevc=Safari/iOS(HEVC+アルファの .mov)。
+  // tall は縦長用の動画ができたら { webm: "/hero/tall.webm", hevc: "/hero/tall.mov" } を入れるだけ（null の間は静止画のまま）
+  video: {
+    wide: { webm: "/hero/wide.webm", hevc: "/hero/wide.mov" },
+    tall: { webm: "/hero/tall.webm", hevc: "/hero/tall.mov" },
+  } as { wide: HeroVideoSrc | null; tall: HeroVideoSrc | null },
+  reading: "ねむ — Nemu Rainbow",
+  catch: "夜に、虹をかける。",
+  cta: { label: "『よるじかん with ねむ』発売中", href: "#yorujikan" },
+};
+
+// 上部メニュー（下層ページからも使うので、アンカーは「/#…」でトップへ戻る形）
+export const siteNav = {
+  brand: { ja: "音夢", en: "Nemu Rainbow" },
+  items: [
+    { label: "よるじかん", href: "/#yorujikan" },
+    { label: "制作実績", href: "/#works" },
+    { label: "ご依頼", href: "/#contact" },
+    { label: "リンク", href: "/#links" },
+  ],
+};
+
 export const links = [
-  { label: "X（旧Twitter）", desc: "おしごとのご相談はDMへ", url: "https://x.com/nemu_rainbow", icon: "𝕏", color: "#4dabf7" },
+  { label: "X（旧Twitter）", desc: "ご依頼・ご相談はDMへ", url: "https://x.com/nemu_rainbow", icon: "𝕏", color: "#4dabf7" },
   { label: "ネムの夜日記", desc: "音夢の日常4コマ漫画", url: "https://nemu-night-diary.vercel.app", icon: "📖", color: "#9775fa" },
 ];
 
@@ -54,28 +84,48 @@ export const yorujikan = {
   },
 };
 
-// おしごと（制作のご依頼）
-export const services = {
-  sectionLabel: "おしごと",
-  lead: "だいたいなんでもつくります。",
-  items: ["イラスト", "HP・LP", "ゲーム", "アニメ", "アプリ", "MV・各種動画"],
-  strength: "得意は After Effects",
+// ご依頼（Xのダイレクトメッセージへ）
+export const contact = {
   note: "個人サークルのため、お返事までお時間をいただく場合があります。",
   ctaLabel: "XのDMで相談する",
   ctaUrl: "https://x.com/nemu_rainbow",
 };
 
-// 制作実績（youtubeId があれば YouTube サムネ、image があればその画像を表示）
-export const works: { title: string; desc?: string; youtubeId?: string; href?: string; image?: string }[] = [
-  { title: "よるじかん with ねむ", desc: "デスクトップアプリ/2026.09 発売", href: YORUJIKAN_BOOTH_URL, image: "/yorujikan/key.webp" },
-  { title: "アイネ・クライネ・ナハト・ムジーク", desc: "MV/2026.09 制作(公開準備中)", image: "/works/aine-kleine.webp" },
-  { title: "Bet My Existence", youtubeId: "nRiuS6JsQfI", desc: "2026.05" },
-  { title: "ニンジャ犯科帳「チュロスの商人」", youtubeId: "qKrRWRvHeeE", image: "/works/churros.webp", desc: "シーン6のアニメーションを担当" },
-  { title: "ニンジャ犯科帳「野生の証明」", youtubeId: "U4Xhf8YvPps", desc: "シーン11(ラストシーン)のアニメーションを担当" },
-  { title: "harukaze", desc: "ホームページ/京都の小さなお店向けデジタルパートナー", href: "https://harukaze-kyoto.jp", image: "/works/harukaze.webp" },
-  { title: "音のかたづけ", desc: "LP・記事サイト/楽器・オーディオの手放し方ガイド", href: "https://oto-katazuke.com", image: "/works/oto-katazuke.webp" },
-  { title: "CN学園ADV(仮題)", desc: "ブラウザゲーム/CryptoNinja二次創作の学園育成×恋愛アドベンチャー、制作中", image: "/works/cn-gakuen-pool.webp" },
-  { title: "学習塾向け SNSショート動画の自動生成システム", desc: "Webアプリ/クイズ動画の一括生成から承認・投稿までを1画面で", image: "/works/juku-sns.webp" },
+// 各区切りの見出し（和名 — 英字ラベル＋大きな一文）。lead が無ければ一文は出さない
+export const sections = {
+  yorujikan: { ja: "よるじかん", en: "NOW ON SALE", lead: yorujikan.catch },
+  works: { ja: "制作実績", en: "WORKS", lead: "これまでに、つくったもの。" },
+  contact: { ja: "ご依頼", en: "CONTACT", lead: "つくりたいものがあれば、お気軽に。" },
+  links: { ja: "リンク", en: "LINKS", lead: undefined as string | undefined },
+  gallery: { ja: "ギャラリー", en: "GALLERY", lead: undefined as string | undefined },
+};
+
+// 制作実績の分野（切り替えの並び順）。works の category は "all" 以外のどれか
+export const workCategories = [
+  { id: "all", label: "すべて" },
+  { id: "mv", label: "MV・動画" },
+  { id: "anime", label: "アニメ" },
+  { id: "game", label: "ゲーム" },
+  { id: "app", label: "アプリ" },
+  { id: "web", label: "HP・LP" },
+] as const;
+export type WorkCategory = Exclude<(typeof workCategories)[number]["id"], "all">;
+
+// 制作実績（category=分野、youtubeId があれば YouTube サムネ、image があればその画像を表示）
+export const works: { title: string; category: WorkCategory; desc?: string; youtubeId?: string; href?: string; image?: string }[] = [
+  { title: "アイネクライネナハトムジーク", category: "mv", youtubeId: "6f3hvw95JP8", desc: "MV/2026.10 公開", image: "/works/aine-kleine.webp" },
+  { title: "Bet My Existence", category: "mv", youtubeId: "nRiuS6JsQfI", desc: "2026.05" },
+  { title: "ニンジャ犯科帳「チュロスの商人」", category: "anime", youtubeId: "qKrRWRvHeeE", image: "/works/churros.webp", desc: "シーン6のアニメーションを担当" },
+  { title: "ニンジャ犯科帳「野生の証明」", category: "anime", youtubeId: "U4Xhf8YvPps", desc: "シーン11(ラストシーン)のアニメーションを担当" },
+  { title: "月見のぼり", category: "game", desc: "ブラウザゲーム/月蝕綺譚の二次創作(非公式)。ワンタップで登っていく縦スクロール", href: "https://tsukimi-nobori.pages.dev", image: "/works/tsukimi-nobori.webp" },
+  { title: "CN学園ADV(仮題)", category: "game", desc: "ブラウザゲーム/CryptoNinja二次創作の学園育成×恋愛アドベンチャー、制作中", image: "/works/cn-gakuen-pool.webp" },
+  { title: "よるじかん with ねむ", category: "app", desc: "デスクトップアプリ/2026.09 発売", href: YORUJIKAN_BOOTH_URL, image: "/yorujikan/key.webp" },
+  { title: "学習塾向け SNSショート動画の自動生成システム", category: "app", desc: "Webアプリ/クイズ動画の一括生成から承認・投稿までを1画面で", image: "/works/juku-sns.webp" },
+  { title: "占いショート動画の自動生成・投稿システム", category: "app", desc: "Webアプリ/台本づくりから動画の生成・検品・予約投稿までを1画面で", image: "/works/uranai-shorts.webp" },
+  { title: "harukaze", category: "web", desc: "ホームページ/京都の小さなお店向けデジタルパートナー", href: "https://harukaze-kyoto.jp", image: "/works/harukaze.webp" },
+  { title: "珈琲 春灯", category: "web", desc: "ホームページ/京都の町家カフェの作例", href: "https://harukaze-kyoto.jp/cafe-haruakari/", image: "/works/cafe-haruakari.webp" },
+  { title: "音のかたづけ", category: "web", desc: "LP・記事サイト/楽器・オーディオの手放し方ガイド", href: "https://oto-katazuke.com", image: "/works/oto-katazuke.webp" },
+  { title: "整体院 木の芽", category: "web", desc: "LP/整体院の作例。スマホで読む縦長の1ページ", href: "/sakurei/seitai-konome/index.html", image: "/works/seitai-konome.webp" },
 ];
 
 // 「はじめて開くときの手順」ページ（/yorujikan/guide）
