@@ -18,52 +18,6 @@ export default function Hero() {
         <HeroMotion video={hero.video} />
       </div>
 
-      {/* しるし：夜空にかかる細い虹の弧（左から右へ描かれる） */}
-      <svg
-        className="hero-arc"
-        viewBox="0 0 1000 600"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <defs>
-          <linearGradient id="hero-arc-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="0">
-            <stop offset="0" stopColor="#ff6b6b" />
-            <stop offset="0.1667" stopColor="#ffa94d" />
-            <stop offset="0.3333" stopColor="#ffd43b" />
-            <stop offset="0.5" stopColor="#69db7c" />
-            <stop offset="0.6667" stopColor="#4dabf7" />
-            <stop offset="0.8333" stopColor="#748ffc" />
-            <stop offset="1" stopColor="#da77f2" />
-          </linearGradient>
-          {/* 横長の絵では弧を人物の手前で消すので、7色をその範囲に収める */}
-          <linearGradient id="hero-arc-grad-wide" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="640" y2="0">
-            <stop offset="0" stopColor="#ff6b6b" />
-            <stop offset="0.1667" stopColor="#ffa94d" />
-            <stop offset="0.3333" stopColor="#ffd43b" />
-            <stop offset="0.5" stopColor="#69db7c" />
-            <stop offset="0.6667" stopColor="#4dabf7" />
-            <stop offset="0.8333" stopColor="#748ffc" />
-            <stop offset="1" stopColor="#da77f2" />
-          </linearGradient>
-        </defs>
-        <path
-          className="arc-tall"
-          d="M 1040 190 Q 520 -10 -40 130"
-          fill="none"
-          stroke="url(#hero-arc-grad)"
-          strokeWidth="1.5"
-          vectorEffect="non-scaling-stroke"
-        />
-        <path
-          className="arc-wide"
-          d="M 1040 190 Q 520 -10 -40 130"
-          fill="none"
-          stroke="url(#hero-arc-grad-wide)"
-          strokeWidth="1.5"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
 
       {/* 音夢をタップするとしゃべる（当たり判定は見えないボタン。文字やリンクより下） */}
       <HeroVoice voices={hero.voices} hint={hero.voiceHint} label={hero.voiceLabel} />
