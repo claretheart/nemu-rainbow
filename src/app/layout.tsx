@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Zen_Old_Mincho } from "next/font/google";
+import BgmPlayer from "./BgmPlayer";
 import SiteHeader from "./SiteHeader";
 import StarField from "./StarField";
 import "./globals.css";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <StarField />
         <SiteHeader />
+        <BgmPlayer />
         {children}
       </body>
     </html>

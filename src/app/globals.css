@@ -455,6 +455,65 @@ h2 {
   white-space: nowrap;
 }
 
+/* BGM(BgmPlayer.tsx)。画面右下に固定。本文・手前の光の粒(40)より上、上部メニュー(50)より下 */
+.bgm {
+  position: fixed;
+  z-index: 45;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+.bgm-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .2s;
+}
+
+.bgm-button:hover {
+  border-color: var(--ink-2);
+}
+
+.bgm-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* 鳴っている間、縦棒3本が静かに上下する */
+.bgm-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.bgm-bars i {
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: bottom;
+  animation: bgm-bar 1.2s ease-in-out infinite;
+}
+
+.bgm-bars i:nth-child(2) { animation-delay: -.4s; }
+.bgm-bars i:nth-child(3) { animation-delay: -.8s; }
+
+@keyframes bgm-bar {
+  0%, 100% { transform: scaleY(.3); }
+  50% { transform: scaleY(1); }
+}
+
 /* スクロール合図：細い縦線だけ */
 .hero-scroll {
   position: absolute;
@@ -890,6 +949,7 @@ a.work-card:hover {
 @media (prefers-reduced-motion: reduce) {
   .reveal { transition: none; }
   .hero-bubble, .hero-hint { transition: none; }
+  .bgm-bars i { animation: none; transform: scaleY(.65); }
   .reveal.reveal-pending { opacity: 1; transform: none; }
   .works-grid { transition: none; }
 }
@@ -904,6 +964,10 @@ a.work-card:hover {
   .site-nav { display: none; }
 
   .site-header .button-outline { margin-left: auto; }
+
+  /* BGMのボタンは小さく端に寄せる */
+  .bgm { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .bgm-button { min-height: 32px; padding: 0 10px; font-size: 12px; gap: 6px; }
 
   /* 音夢をタップ:中央下に当たり判定。台詞は顔の上、合図は右上 */
   .hero-voice { left: 12%; top: 38%; width: 80%; height: 42%; }

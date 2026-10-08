@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { VOICE_END, VOICE_START } from "./bgmEvents";
 import { createHeroLog, type HeroLog } from "./heroDebug";
 
 type Voice = { src: string; text: string };
@@ -52,7 +53,10 @@ export default function HeroVoice({ voices, hint, label }: { voices: Voice[]; hi
       window.clearTimeout(hideHint);
       window.clearTimeout(hideTimer.current);
       window.clearTimeout(fadeTimer.current);
-      audioRef.current?.pause();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        window.dispatchEvent(new Event(VOICE_END)); // BGM の音量を必ず戻す
+      }
     };
   }, []);
 
@@ -92,13 +96,17 @@ export default function HeroVoice({ voices, hint, label }: { voices: Voice[]; hi
     audio.volume = VOLUME;
     audio.src = voice.src;
     audioRef.current = audio;
+    // 声が鳴っている間は BGM を下げる。終わり・失敗では必ず戻す（途中で次の声に替えたときは、新しい声の終わりで戻る）
+    window.dispatchEvent(new Event(VOICE_START));
     audio.addEventListener("ended", () => {
       if (audioRef.current !== audio) return;
+      window.dispatchEvent(new Event(VOICE_END));
       log(`音声 終了 ${voice.src}`);
       scheduleHide(HIDE_DELAY_MS);
     });
     audio.addEventListener("error", () => {
       if (audioRef.current !== audio) return;
+      window.dispatchEvent(new Event(VOICE_END));
       log(`音声 error code=${audio.error?.code} ${voice.src}`);
       scheduleHide(FAILED_SHOW_MS);
     });
@@ -106,6 +114,7 @@ export default function HeroVoice({ voices, hint, label }: { voices: Voice[]; hi
       () => log(`音声 再生開始 ${voice.src}`),
       (e: unknown) => {
         if (audioRef.current !== audio) return;
+        window.dispatchEvent(new Event(VOICE_END));
         // 再生できなくても何も壊さない（吹き出しだけ見せる）
         log(`音声 失敗 ${e instanceof DOMException ? e.name : "?"}: ${e instanceof Error ? e.message : ""}`);
         scheduleHide(FAILED_SHOW_MS);

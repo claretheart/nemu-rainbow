@@ -34,6 +34,16 @@ export const hero = {
   cta: { label: "『よるじかん with ねむ』発売中", href: "#yorujikan" },
 };
 
+// BGM（利用者が押して初めて鳴る。volume は通常、duckVolume は音夢の声が鳴っている間）
+export const bgm = {
+  src: "/bgm/milk-iro-no-yume.m4a",
+  title: "ミルク色の夢で逢おう",
+  labelPlay: "音楽を流す",
+  labelStop: "音楽を止める",
+  volume: 0.35,
+  duckVolume: 0.12,
+};
+
 // 上部メニュー（下層ページからも使うので、アンカーは「/#…」でトップへ戻る形）
 export const siteNav = {
   brand: { ja: "音夢", en: "Nemu Rainbow" },
