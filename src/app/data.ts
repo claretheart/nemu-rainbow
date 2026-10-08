@@ -1,13 +1,5 @@
 export const profile = {
   name: "音夢",
-  reading: "ねむ",
-  handle: "@nemu_rainbow",
-  bio: [
-    "夜の作業アプリ『よるじかん with ねむ』、発売中🌈",
-    "HP・LP・ゲーム・アニメ・アプリ・MVなどをつくります。",
-    "ご依頼は X のDMへ。",
-  ],
-  avatar: "/avatar.png",
 };
 
 export type HeroVideoSrc = { webm: string; hevc: string };
@@ -25,6 +17,19 @@ export const hero = {
     tall: { webm: "/hero/tall.webm", hevc: "/hero/tall.mov" },
   } as { wide: HeroVideoSrc | null; tall: HeroVideoSrc | null },
   reading: "ねむ — Nemu Rainbow",
+  // 音夢をタップするとしゃべる声（『よるじかん with ねむ』の既存ボイス。ファイルと台詞の対）
+  voices: [
+    { src: "/voice/work_04.m4a", text: "ん？どうしたの？……なんてね、続き続き" },
+    { src: "/voice/quip_lv8_01.m4a", text: "夜のこの時間がいちばん好き" },
+    { src: "/voice/quip_lv8_05.m4a", text: "星、今日は多めかも" },
+    { src: "/voice/break_05.m4a", text: "窓の外、星きれいだよ" },
+    { src: "/voice/quip_02.m4a", text: "お茶飲む？" },
+    { src: "/voice/break_02.m4a", text: "おつかれさま。がんばってたね" },
+    { src: "/voice/work_09.m4a", text: "がんばってるの、知ってるよ" },
+    { src: "/voice/session_start_03.m4a", text: "今日もいっしょにがんばろ。ゆっくりでいいからね" },
+  ],
+  voiceHint: "タップで おしゃべり",
+  voiceLabel: "音夢に話しかける",
   catch: "夜に、虹をかける。",
   cta: { label: "『よるじかん with ねむ』発売中", href: "#yorujikan" },
 };
@@ -41,12 +46,9 @@ export const siteNav = {
 };
 
 export const links = [
-  { label: "X（旧Twitter）", desc: "ご依頼・ご相談はDMへ", url: "https://x.com/nemu_rainbow", icon: "𝕏", color: "#4dabf7" },
-  { label: "ネムの夜日記", desc: "音夢の日常4コマ漫画", url: "https://nemu-night-diary.vercel.app", icon: "📖", color: "#9775fa" },
+  { label: "X（旧Twitter）", desc: "ご依頼・ご相談はDMへ", url: "https://x.com/nemu_rainbow" },
+  { label: "ネムの夜日記", desc: "音夢の日常4コマ漫画", url: "https://nemu-night-diary.vercel.app" },
 ];
-
-// LINE公式アカウントの友だち追加URL（差し替えはここ1箇所だけ）
-export const LINE_FRIEND_URL = "https://lin.ee/n47BCvw";
 
 // BOOTHの商品ページ（トップ・制作実績・手順ページで共用）
 const YORUJIKAN_BOOTH_URL = "https://nemu-rainbow.booth.pm/items/8866390";
@@ -54,7 +56,6 @@ const YORUJIKAN_BOOTH_URL = "https://nemu-rainbow.booth.pm/items/8866390";
 // 「よるじかん with ねむ」販売セクションの掲載コピー
 // 価格表記は「980円(税込)」のみ（割引・期間限定を思わせる言葉は書かない）
 export const yorujikan = {
-  sectionLabel: "Now on Sale",
   title: "よるじかん with ねむ",
   catch: "夜の作業、いっしょにがんばろ？",
   status: "2026.09.20 発売",
@@ -68,11 +69,6 @@ export const yorujikan = {
   platform: "Mac(Apple Silicon)/Windows 10・11",
   boothUrl: YORUJIKAN_BOOTH_URL,
   boothLabel: "BOOTHで見る",
-  lineLead: "アップデートのお知らせは LINE で",
-  lineLabel: "LINEで友だち追加",
-  linePendingNote: "(じゅんびちゅう)",
-  guideLabel: "はじめて開くときの手順",
-  guideHref: "/yorujikan/guide",
   images: {
     key: { src: "/yorujikan/key.webp", alt: "よるじかん with ねむ のキービジュアル。夜の窓辺でパソコンに向かう音夢" },
     // 機能紹介のサムネ（クリックで原寸を開く）
@@ -118,7 +114,7 @@ export const works: { title: string; category: WorkCategory; desc?: string; yout
   { title: "ニンジャ犯科帳「チュロスの商人」", category: "anime", youtubeId: "qKrRWRvHeeE", image: "/works/churros.webp", desc: "シーン6のアニメーションを担当" },
   { title: "ニンジャ犯科帳「野生の証明」", category: "anime", youtubeId: "U4Xhf8YvPps", desc: "シーン11(ラストシーン)のアニメーションを担当" },
   { title: "月見のぼり", category: "game", desc: "ブラウザゲーム/月蝕綺譚の二次創作(非公式)。ワンタップで登っていく縦スクロール", href: "https://tsukimi-nobori.pages.dev", image: "/works/tsukimi-nobori.webp" },
-  { title: "CN学園ADV(仮題)", category: "game", desc: "ブラウザゲーム/CryptoNinja二次創作の学園育成×恋愛アドベンチャー、制作中", image: "/works/cn-gakuen-pool.webp" },
+  { title: "CN学園ADV(仮題)", category: "game", desc: "ブラウザゲーム/CryptoNinja二次創作の学園ADV、制作中", image: "/works/cn-gakuen-pool.webp" },
   { title: "よるじかん with ねむ", category: "app", desc: "デスクトップアプリ/2026.09 発売", href: YORUJIKAN_BOOTH_URL, image: "/yorujikan/key.webp" },
   { title: "学習塾向け SNSショート動画の自動生成システム", category: "app", desc: "Webアプリ/クイズ動画の一括生成から承認・投稿までを1画面で", image: "/works/juku-sns.webp" },
   { title: "占いショート動画の自動生成・投稿システム", category: "app", desc: "Webアプリ/台本づくりから動画の生成・検品・予約投稿までを1画面で", image: "/works/uranai-shorts.webp" },

@@ -4,7 +4,7 @@ import WorksBrowser from "../WorksBrowser";
 
 export default function WorksPage() {
   return (
-    <div className="page is-wide">
+    <main className="page is-wide">
 
       {/* ヘッダー */}
       <div className="page-header">
@@ -24,6 +24,6 @@ export default function WorksPage() {
       ) : (
         <WorksBrowser items={works} />
       )}
-    </div>
+    </main>
   );
 }

@@ -576,7 +576,8 @@ a.btn--primary:hover { background: var(--kaki-hover); border-color: var(--kaki-h
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 22px 0;
+  position: relative;
+  padding: 22px 44px 22px 0;
   font-family: var(--serif);
   font-size: clamp(17px, 2vw, 19px);
   font-weight: 700;
@@ -587,7 +588,6 @@ a.btn--primary:hover { background: var(--kaki-hover); border-color: var(--kaki-h
 }
 .faq summary::-webkit-details-marker { display: none; }
 /* 開閉アイコン(+ / −)は細い線2本で描く */
-.faq summary { position: relative; padding-right: 44px; }
 .faq summary::before,
 .faq summary::after {
   content: "";

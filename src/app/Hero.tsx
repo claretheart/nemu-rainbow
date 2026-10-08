@@ -1,5 +1,6 @@
 import { hero, profile } from "./data";
 import HeroMotion from "./HeroMotion";
+import HeroVoice from "./HeroVoice";
 
 // 最初の一画面：絵＋縦書きの題字＋大きな一文＋虹の弧
 export default function Hero() {
@@ -63,6 +64,9 @@ export default function Hero() {
           vectorEffect="non-scaling-stroke"
         />
       </svg>
+
+      {/* 音夢をタップするとしゃべる（当たり判定は見えないボタン。文字やリンクより下） */}
+      <HeroVoice voices={hero.voices} hint={hero.voiceHint} label={hero.voiceLabel} />
 
       <div className="hero-inner">
         <div className="hero-title">

@@ -24,7 +24,7 @@ function StepList({ steps }: { steps: typeof guide.mac.steps }) {
 
 export default function GuidePage() {
   return (
-    <div className="page">
+    <main className="page">
 
       {/* ヘッダー */}
       <div className="page-header">
@@ -87,6 +87,6 @@ export default function GuidePage() {
           {guide.contactLabel}
         </a>
       </div>
-    </div>
+    </main>
   );
 }

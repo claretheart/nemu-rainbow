@@ -61,7 +61,7 @@ const MOBILE_WIDTH = 700;
 
 // ===== 乱数・色 =====
 
-// 種つき乱数（NightSky.tsx から流用）
+// 種つき乱数
 function seededRandom(seed: number) {
   let s = seed;
   return () => {
@@ -70,7 +70,7 @@ function seededRandom(seed: number) {
   };
 }
 
-// 星・光の粒の色：基本は青白。まれに「虹のかけら」のパステル色（NightSky.tsx から流用）
+// 星・光の粒の色：基本は青白。まれに「虹のかけら」のパステル色
 const STAR_TINTS = [
   "220, 230, 255",
   "255, 244, 214",
@@ -207,7 +207,11 @@ export default function StarField() {
     let frontMotes: Mote[] = [];
     let scroll = window.scrollY;
     let raf = 0;
-    let heroVarQueued = false;
+    let heroMoveQueued = false;
+    // ヒーローの絵・動画の視差：--scroll-y を全体に書くと毎フレーム全体の再計算になるので、対象に直接 transform を書く
+    const heroParallax = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hero-parallax")) || 0.3;
+    let heroEl: HTMLElement | null = null;
+    let heroH = 0;
     let sectionDirty = true;
     let frame = 0;
     let lastT = 0;
@@ -231,6 +235,7 @@ export default function StarField() {
     const resize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
+      heroEl = null; // ヒーローの高さを測り直す
       // モバイルのアドレスバー出入りでの高さの小変動では作り直さない
       if (w === W && Math.abs(h - H) < 150) return;
       W = w;
@@ -364,16 +369,27 @@ export default function StarField() {
       raf = requestAnimationFrame(loop);
     };
 
-    // スクロール量は passive リスナーで受ける。--scroll-y はヒーローの絵の視差が使う
+    const moveHero = () => {
+      heroMoveQueued = false;
+      const el = document.querySelector<HTMLElement>(".hero");
+      if (el !== heroEl) {
+        heroEl = el;
+        heroH = el ? el.offsetHeight : 0;
+      }
+      // ヒーローが画面の外に出てからは何もしない
+      if (!el || scroll > heroH) return;
+      const y = `translate3d(0, ${scroll * heroParallax}px, 0)`;
+      el.querySelectorAll<HTMLElement>(".hero-picture img, .hero-video").forEach((t) => {
+        t.style.transform = y;
+      });
+    };
+    // スクロール量は passive リスナーで受ける（rAF で間引く）
     const onScroll = () => {
       scroll = window.scrollY;
       sectionDirty = true;
-      if (heroVarQueued) return;
-      heroVarQueued = true;
-      requestAnimationFrame(() => {
-        heroVarQueued = false;
-        document.documentElement.style.setProperty("--scroll-y", String(scroll));
-      });
+      if (heroMoveQueued) return;
+      heroMoveQueued = true;
+      requestAnimationFrame(moveHero);
     };
     const onVisibility = () => {
       if (document.hidden) cancelAnimationFrame(raf);

@@ -215,6 +215,11 @@ h2 {
   color: var(--ink-2);
 }
 
+/* 820px以下はロゴの英字を隠して、メニューとの間を空ける */
+@media (max-width: 820px) {
+  .brand-en { display: none; }
+}
+
 .site-nav {
   margin-left: auto;
 }
@@ -267,12 +272,11 @@ h2 {
   object-fit: cover;
 }
 
-/* 視差：スクロール量(--scroll-y)の --hero-parallax 倍だけ下へずらす。
+/* 視差：スクロール量の --hero-parallax 倍だけ下へずらす(transform は StarField.tsx が直接書く)。
    ずれて上にできる隙間は、その時点で画面の外へ流れているので見えない(.hero の overflow:hidden で下は切る) */
 .hero-picture img,
 .hero-video {
   object-position: 70% 15%;
-  transform: translate3d(0, calc(var(--scroll-y, 0) * var(--hero-parallax) * 1px), 0);
   will-change: transform;
 }
 
@@ -367,6 +371,14 @@ h2 {
   padding: calc(var(--header-h) + 32px) var(--gutter) 88px;
 }
 
+/* 文字・リンク以外はクリックを下の当たり判定(.hero-voice)へ通す */
+.hero-inner { pointer-events: none; }
+.hero-inner h1,
+.hero-reading,
+.hero-catch,
+.hero-link { pointer-events: auto; }
+.hero-catch { width: fit-content; }
+
 .hero-title {
   display: flex;
   align-items: flex-start;
@@ -410,6 +422,66 @@ h2 {
 
 .hero-link:hover {
   color: var(--ink);
+}
+
+/* 音夢をタップするとしゃべる(HeroVoice.tsx)。当たり判定は見えないボタン。
+   重ね順は絵・弧(2)と同じ高さで、文字・リンク(.hero-inner の中身)より下 */
+.hero-voice {
+  position: absolute;
+  z-index: 2;
+  left: 52%;
+  top: 8%;
+  width: 36%;
+  height: 70%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-voice:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -4px;
+  border-radius: var(--radius);
+}
+
+/* 吹き出し(台詞)と合図。--surface の不透明な面。影・グラデ・すりガラスなし */
+.hero-bubble,
+.hero-hint {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  padding: 10px 14px;
+  color: var(--ink);
+  background: var(--surface);
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.7;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.hero-bubble.is-shown,
+.hero-hint.is-shown {
+  opacity: 1;
+}
+
+/* 台詞：顔の左(幅701px以上) */
+.hero-bubble {
+  right: 55%;
+  top: 27%;
+  max-width: min(260px, 40%);
+}
+
+/* 合図：小さめ・顔の近く */
+.hero-hint {
+  left: 66%;
+  top: 79%;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: nowrap;
 }
 
 /* スクロール合図：細い縦線だけ */
@@ -644,6 +716,7 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
+  transition: opacity .2s; /* 分野の切り替えのフェード */
 }
 
 /* トップの実績は、最大幅1120pxの中で3列 */
@@ -707,10 +780,6 @@ h2 {
 }
 
 /* 切り替え中は200msでフェードアウト→絞り込み→フェードイン */
-.works-grid {
-  transition: opacity .2s;
-}
-
 .works-grid.is-switching {
   opacity: 0;
 }
@@ -849,9 +918,8 @@ a.work-card:hover {
 /* ===== 動きを減らす設定 ===== */
 @media (prefers-reduced-motion: reduce) {
   .hero-arc { animation: none; }
-  .hero-picture img,
-  .hero-video { transform: none; }
   .reveal { transition: none; }
+  .hero-bubble, .hero-hint { transition: none; }
   .reveal.reveal-pending { opacity: 1; transform: none; }
   .works-grid { transition: none; }
 }
@@ -866,6 +934,11 @@ a.work-card:hover {
   .site-nav { display: none; }
 
   .site-header .button-outline { margin-left: auto; }
+
+  /* 音夢をタップ:中央下に当たり判定。台詞は顔の上、合図は右上 */
+  .hero-voice { left: 12%; top: 38%; width: 80%; height: 42%; }
+  .hero-bubble { left: 36%; right: auto; top: auto; bottom: 64%; max-width: 60%; }
+  .hero-hint { left: auto; right: 5%; top: 33%; }
 
   .yorujikan-main {
     flex-direction: column;

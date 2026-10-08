@@ -20,7 +20,8 @@ export default function WorkCard({ work, hidden }: { work: Work; hidden?: boolea
           <Image src={thumb} alt="" fill />
           {work.youtubeId && (
             <div className="play-overlay">
-              <span aria-hidden="true">▶</span>
+              {/* ▶︎ の後ろの U+FE0E で、Android で絵文字に化けないようにする */}
+              <span aria-hidden="true">{"\u25B6\uFE0E"}</span>
             </div>
           )}
         </div>
