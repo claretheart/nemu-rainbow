@@ -303,8 +303,8 @@ h2 {
   visibility: hidden;
 }
 
-/* 絵と重ねの下端を透かして、後ろの夜空(StarField)へ継ぎ目なくつなぐ */
-.hero-media,
+/* 重ねの下端を透かして、後ろの夜空(StarField)へ継ぎ目なくつなぐ。
+   絵と動画の下端の透かしは、素材の透明度に焼き込んである(iPhoneで透過動画に mask を重ねるとちらつくため) */
 .hero::before,
 .hero::after {
   -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
