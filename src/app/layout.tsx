@@ -15,7 +15,7 @@ const mincho = Zen_Old_Mincho({
 
 export const metadata: Metadata = {
   // OG画像などの相対パスを公開URLで解決するための基点
-  metadataBase: new URL("https://nemu-rainbow.vercel.app"),
+  metadataBase: new URL("https://nemu-rainbow.pages.dev"),
   title: "音夢 | Nemu Rainbow",
   description: "音夢(ねむ)のサイト。夜の作業アプリ『よるじかん with ねむ』発売中。HP・LP・ゲーム・MVなどの制作も。",
   openGraph: {

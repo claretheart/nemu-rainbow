@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "destination": "https://nemu-rainbow.pages.dev/:path*",
+      "permanent": false
+    }
+  ]
+}

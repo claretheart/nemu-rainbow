@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "deploy": "next build && CLOUDFLARE_ACCOUNT_ID=94866cd02216e61c889768c1b5ce230c npx --yes wrangler@4 pages deploy out --project-name nemu-rainbow --branch main"
   },
   "dependencies": {
     "next": "16.2.3",
